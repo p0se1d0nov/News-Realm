@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS news (
     date_publish DATE,
     time_publish TIME,
     language VARCHAR(10) NOT NULL DEFAULT 'ru',
-    url TEXT NOT NULL UNIQUE,
+    url TEXT UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
