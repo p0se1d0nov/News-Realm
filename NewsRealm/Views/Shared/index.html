@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewsFlow | Агрегатор новостей</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Slab:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Дополнительные стили для главной страницы */
+        .feed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .feed-header h2 {
+            font-size: 1.8rem;
+            color: #1a237e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stats {
+            font-size: 0.95rem;
+            color: #666;
+            background: #f0f2f5;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-newspaper"></i>
+                    <div>
+                        <h1>NewsFlow</h1>
+                        <span class="tagline">Агрегатор новостей</span>
+                    </div>
+                </a>
+                
+                <div class="header-actions">
+                    <div class="search-box">
+                        <input type="text" placeholder="Поиск новостей..." id="searchInput">
+                        <button><i class="fas fa-search"></i></button>
+                    </div>
+                    
+                    <a href="add-news.html" class="btn-action">
+                        <i class="fas fa-plus-circle"></i> Добавить новость
+                    </a>
+                    
+                    <a href="edit-news.html" class="btn-action">
+                        <i class="fas fa-edit"></i> Редактировать
+                    </a>
+                    
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        <div class="container">
+            <div class="feed-header">
+                <h2><i class="fas fa-stream"></i> Лента новостей</h2>
+                <div class="stats" id="newsCount">Загрузка...</div>
+            </div>
+            
+            <!-- Контейнер для новостей -->
+            <div class="news-container" id="newsContainer">
+                <div class="news-placeholder">
+                    <div class="placeholder-content">
+                        <i class="fas fa-newspaper"></i>
+                        <h3>Лента новостей</h3>
+                        <p>Здесь будут отображаться новости из разных источников.</p>
+                        <p>Используйте кнопки выше для управления контентом.</p>
+                    </div>
+                </div>
+            </div>
+        
+    </main>
+
+
+    <script>
+
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            displayNews(demoNews);
+            setupEventListeners();
+        });
+
+        // Отображение новостей
+        function displayNews(newsArray) {
+            const newsContainer = document.getElementById('newsContainer');
+            const newsCount = document.getElementById('newsCount');
+            
+            if (!newsContainer) return;
+            
+            if (!newsArray || newsArray.length === 0) {
+                newsContainer.innerHTML = `
+                    <div class="news-placeholder">
+                        <div class="placeholder-content">
+                            <i class="fas fa-newspaper"></i>
+                            <h3>Новостей пока нет</h3>
+                            <p>Добавьте первую новость!</p>
+                        </div>
+                    </div>
+                `;
+                newsCount.textContent = 'Новостей: 0';
+                return;
+            }
+            
+            newsContainer.innerHTML = '';
+            
+            newsArray.forEach(item => {
+                const newsElement = createNewsElement(item);
+                newsContainer.appendChild(newsElement);
+            });
+            
+            newsCount.textContent = `Новостей: ${newsArray.length}`;
+        }
+
+        // Создание элемента новости
+        function createNewsElement(item) {
+            const div = document.createElement('div');
+            div.className = 'news-item';
+            
+            const imageHtml = item.image 
+                ? `<img src="${item.image}" alt="${item.title}" class="news-image">`
+                : `<div class="news-image"><i class="fas fa-newspaper"></i></div>`;
+            
+            div.innerHTML = `
+                ${imageHtml}
+                <div class="news-content">
+                    <div class="news-meta">
+                        <span class="news-source">${item.source}</span>
+                        <span class="news-category">${item.category}</span>
+                        <span class="news-time">${item.timeAgo}</span>
+                    </div>
+                    <h3 class="news-title">${item.title}</h3>
+                    <p class="news-excerpt">${item.description}</p>
+                    ${item.authors ? `<p class="news-author">Автор: ${item.authors}</p>` : ''}
+                    <div class="news-actions">
+                        <button class="btn-edit" onclick="editNews(${item.id})">
+                            <i class="fas fa-edit"></i> Редактировать
+                        </button>
+                        <button class="btn-delete" onclick="deleteNews(${item.id})">
+                            <i class="fas fa-trash"></i> Удалить
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        // Редактирование новости
+        function editNews(newsId) {
+            window.location.href = `edit-news.html?id=${newsId}`;
+        }
+
+        // Удаление новости
+        function deleteNews(newsId) {
+            if (confirm('Вы уверены, что хотите удалить эту новость?')) {
+                showNotification('Новость удалена', 'success');
+                // В реальном приложении здесь был бы запрос к серверу
+                const news = demoNews.filter(item => item.id !== newsId);
+                displayNews(news);
+            }
+        }
+
+        // Поиск новостей
+        function performSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                displayNews(demoNews);
+                return;
+            }
+            
+            const filteredNews = demoNews.filter(item => 
+                item.title.toLowerCase().includes(searchTerm) ||
+                item.description.toLowerCase().includes(searchTerm) ||
+                item.source.toLowerCase().includes(searchTerm) ||
+                item.category.toLowerCase().includes(searchTerm)
+            );
+            
+            displayNews(filteredNews);
+        }
+
+        // Показать уведомление
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            
+            const bgColor = type === 'success' ? '#4CAF50' : 
+                           type === 'error' ? '#f44336' : 
+                           '#2196F3';
+            
+            const icon = type === 'success' ? 'check-circle' : 
+                        type === 'error' ? 'exclamation-circle' : 
+                        'info-circle';
+            
+            notification.innerHTML = `
+                <i class="fas fa-${icon}"></i>
+                <span>${message}</span>
+            `;
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: ${bgColor};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                min-width: 300px;
+                z-index: 3000;
+                animation: slideIn 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Настройка обработчиков событий
+        function setupEventListeners() {
+            const searchBtn = document.querySelector('.search-box button');
+            const searchInput = document.getElementById('searchInput');
+            
+            if (searchBtn) {
+                searchBtn.addEventListener('click', performSearch);
+            }
+            
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') performSearch();
+                });
+            }
+        }
+    </script>
+</body>
+</html>

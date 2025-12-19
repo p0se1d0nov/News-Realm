@@ -1,0 +1,292 @@
+@model NewsRealm.Models.NewsModel
+@{
+    ViewData["Title"] = "NewsFlow | Добавить новость";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Slab:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .preview-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 4px solid #4fc3f7;
+        }
+        
+        .preview-section h3 {
+            font-size: 1.2rem;
+            color: #1a237e;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .preview-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .preview-news {
+            padding: 15px;
+        }
+        
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .preview-source {
+            background: #e8f4fc;
+            color: #1a237e;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .preview-category {
+            background: #f0f0f0;
+            color: #555;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .preview-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1a237e;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+        
+        .preview-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .preview-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #777;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+        
+        .text-danger {
+            color: #d32f2f;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a asp-controller="Frontend" asp-action="Index" class="logo">
+                    <i class="fas fa-newspaper"></i>
+                    <div>
+                        <h1>NewsFlow</h1>
+                        <span class="tagline">Добавить новость</span>
+                    </div>
+                </a>
+                
+                <div class="header-actions">
+                    <a asp-controller="Frontend" asp-action="Index" class="btn-action">
+                        <i class="fas fa-arrow-left"></i> На главную
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h2><i class="fas fa-plus-circle"></i> Добавить новость</h2>
+                <p class="page-subtitle">Заполните форму для добавления новой новости в агрегатор</p>
+            </div>
+            
+            <!-- Форма добавления новости -->
+            <div class="form-container">
+                <form asp-controller="Frontend" asp-action="AddNews" method="post" id="addNewsForm">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    
+                    <!-- Source (Источник) -->
+                    <div class="form-group">
+                        <label asp-for="Source">Источник *</label>
+                        <input type="text" asp-for="Source" placeholder="Например: РИА Новости, BBC, Reuters" required>
+                        <span asp-validation-for="Source" class="text-danger"></span>
+                        <div class="form-hint">Укажите название источника новости</div>
+                    </div>
+                    
+                    <!-- Title (Заголовок) -->
+                    <div class="form-group">
+                        <label asp-for="Title">Заголовок новости *</label>
+                        <input type="text" asp-for="Title" placeholder="Введите заголовок новости" required>
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                        <div class="form-hint">Краткое и информативное название</div>
+                    </div>
+                    
+                    <!-- Description (Краткое описание) -->
+                    <div class="form-group">
+                        <label asp-for="Description">Краткое описание *</label>
+                        <textarea asp-for="Description" placeholder="Введите краткое описание новости..." rows="3" required></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                        <div class="form-hint">Короткое описание для превью (1-2 предложения)</div>
+                    </div>
+                    
+                    <!-- MainText (Основной текст) -->
+                    <div class="form-group">
+                        <label asp-for="MainText">Основной текст новости *</label>
+                        <textarea asp-for="MainText" placeholder="Введите полный текст новости..." rows="10" required></textarea>
+                        <span asp-validation-for="MainText" class="text-danger"></span>
+                        <div class="form-hint">Полное содержание новости</div>
+                    </div>
+                    
+                    <!-- ImageUrl (Ссылка на изображение) -->
+                    <div class="form-group">
+                        <label asp-for="ImageUrl">Ссылка на изображение</label>
+                        <input type="url" asp-for="ImageUrl" placeholder="https://example.com/image.jpg">
+                        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                        <div class="form-hint">URL изображения для новости</div>
+                    </div>
+                    
+                    <!-- Authors (Авторы) -->
+                    <div class="form-group">
+                        <label asp-for="Authors">Авторы</label>
+                        <input type="text" asp-for="Authors" placeholder="Иван Иванов, Петр Петров">
+                        <span asp-validation-for="Authors" class="text-danger"></span>
+                        <div class="form-hint">Укажите авторов через запятую</div>
+                    </div>
+                    
+                    <!-- Category (Категория) -->
+                    <div class="form-group">
+                        <label asp-for="Category">Категория</label>
+                        <select asp-for="Category">
+                            <option value="">Выберите категорию</option>
+                            <option value="Политика">Политика</option>
+                            <option value="Экономика">Экономика</option>
+                            <option value="Технологии">Технологии</option>
+                            <option value="Спорт">Спорт</option>
+                            <option value="Наука">Наука</option>
+                            <option value="Культура">Культура</option>
+                            <option value="Здоровье">Здоровье</option>
+                            <option value="Общество">Общество</option>
+                        </select>
+                        <span asp-validation-for="Category" class="text-danger"></span>
+                        <div class="form-hint">Выберите или введите новую категорию</div>
+                    </div>
+                    
+                    <!-- Language (Язык) -->
+                    <div class="form-group">
+                        <label asp-for="Language">Язык *</label>
+                        <select asp-for="Language" required>
+                            <option value="">Выберите язык</option>
+                            <option value="Русский" selected>Русский</option>
+                            <option value="English">English</option>
+                            <option value="Español">Español</option>
+                            <option value="Deutsch">Deutsch</option>
+                            <option value="Français">Français</option>
+                            <option value="中文">中文</option>
+                        </select>
+                        <span asp-validation-for="Language" class="text-danger"></span>
+                        <div class="form-hint">Язык новости</div>
+                    </div>
+                    
+                    <!-- Превью новости -->
+                    <div class="preview-section">
+                        <h3><i class="fas fa-eye"></i> Предпросмотр</h3>
+                        <div class="preview-container">
+                            <div class="preview-news" id="newsPreview">
+                                <div class="preview-header">
+                                    <span class="preview-source">Источник</span>
+                                    <span class="preview-category">Категория</span>
+                                </div>
+                                <h4 class="preview-title">Заголовок новости</h4>
+                                <p class="preview-description">Краткое описание новости появится здесь</p>
+                                <div class="preview-footer">
+                                    <span class="preview-authors">Авторы</span>
+                                    <span class="preview-language">Язык</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <a asp-controller="Frontend" asp-action="Index" class="btn-cancel">
+                            <i class="fas fa-times"></i> Отмена
+                        </a>
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-paper-plane"></i> Опубликовать новость
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 NewsFlow. Форма добавления новости.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        // Обновление превью в реальном времени
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('addNewsForm');
+            const preview = document.getElementById('newsPreview');
+            
+            function updatePreview() {
+                const source = document.querySelector('[name="Source"]').value || 'Источник';
+                const title = document.querySelector('[name="Title"]').value || 'Заголовок новости';
+                const description = document.querySelector('[name="Description"]').value || 'Краткое описание новости появится здесь';
+                const authors = document.querySelector('[name="Authors"]').value || 'Авторы';
+                const category = document.querySelector('[name="Category"]').value || 'Категория';
+                const language = document.querySelector('[name="Language"]').value || 'Язык';
+                
+                if (preview) {
+                    preview.querySelector('.preview-source').textContent = source;
+                    preview.querySelector('.preview-category').textContent = category;
+                    preview.querySelector('.preview-title').textContent = title;
+                    preview.querySelector('.preview-description').textContent = description;
+                    preview.querySelector('.preview-authors').textContent = authors ? `Авторы: ${authors}` : '';
+                    preview.querySelector('.preview-language').textContent = language;
+                }
+            }
+            
+            form.addEventListener('input', updatePreview);
+            form.addEventListener('change', updatePreview);
+            updatePreview();
+        });
+    </script>
+</body>
+</html>
+

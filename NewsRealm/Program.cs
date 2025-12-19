@@ -31,6 +31,5 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(name: "backend", pattern: "{controller=NewsModels}/{action?}/{id?}");
 
-
 //app.MapControllers();
 app.Run();

@@ -1,8 +1,198 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<NewsRealm.Models.NewsModel>
+@{
+    ViewData["Title"] = "NewsFlow | Агрегатор новостей";
+    Layout = null;
 }
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Slab:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .feed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .feed-header h2 {
+            font-size: 1.8rem;
+            color: #1a237e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stats {
+            font-size: 0.95rem;
+            color: #666;
+            background: #f0f2f5;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a asp-controller="Frontend" asp-action="Index" class="logo">
+                    <i class="fas fa-newspaper"></i>
+                    <div>
+                        <h1>NewsFlow</h1>
+                        <span class="tagline">Агрегатор новостей</span>
+                    </div>
+                </a>
+                
+                <div class="header-actions">
+                    <div class="search-box">
+                        <input type="text" placeholder="Поиск новостей..." id="searchInput">
+                        <button><i class="fas fa-search"></i></button>
+                    </div>
+                    
+                    <a asp-controller="Frontend" asp-action="AddNews" class="btn-action">
+                        <i class="fas fa-plus-circle"></i> Добавить новость
+                    </a>
+                    
+                    <a asp-controller="Frontend" asp-action="EditNews" class="btn-action">
+                        <i class="fas fa-edit"></i> Редактировать
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    <!-- Основной контент -->
+    <main class="main-content">
+        <div class="container">
+            <div class="feed-header">
+                <h2><i class="fas fa-stream"></i> Лента новостей</h2>
+                <div class="stats" id="newsCount">Новостей: @Model.Count()</div>
+            </div>
+            
+            <!-- Контейнер для новостей -->
+            <div class="news-container" id="newsContainer">
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <div class="news-item">
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@item.ImageUrl" alt="@item.Title" class="news-image">
+                            }
+                            else
+                            {
+                                <div class="news-image"><i class="fas fa-newspaper"></i></div>
+                            }
+                            <div class="news-content">
+                                <div class="news-meta">
+                                    <span class="news-source">@(item.Source ?? "Без источника")</span>
+                                    <span class="news-category">@(item.Category ?? "Без категории")</span>
+                                    <span class="news-time">@(item.DatePublish ?? "")</span>
+                                </div>
+                                <h3 class="news-title">@(item.Title ?? "Без заголовка")</h3>
+                                <p class="news-excerpt">@(item.Description ?? "Без описания")</p>
+                                @if (!string.IsNullOrEmpty(item.Authors))
+                                {
+                                    <p class="news-author">Автор: @item.Authors</p>
+                                }
+                                <div class="news-actions">
+                                    <a asp-controller="Frontend" asp-action="EditNews" asp-route-id="@item.Id" class="btn-edit">
+                                        <i class="fas fa-edit"></i> Редактировать
+                                    </a>
+                                    <form asp-controller="Frontend" asp-action="DeleteNews" asp-route-id="@item.Id" method="post" style="display: inline;" onsubmit="return confirm('Вы уверены, что хотите удалить эту новость?');">
+                                        <button type="submit" class="btn-delete">
+                                            <i class="fas fa-trash"></i> Удалить
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="news-placeholder">
+                        <div class="placeholder-content">
+                            <i class="fas fa-newspaper"></i>
+                            <h3>Новостей пока нет</h3>
+                            <p>Добавьте первую новость!</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 NewsFlow. Агрегатор новостей.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Поиск новостей
+        function performSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const newsItems = document.querySelectorAll('.news-item');
+            let visibleCount = 0;
+            
+            newsItems.forEach(item => {
+                const title = item.querySelector('.news-title')?.textContent.toLowerCase() || '';
+                const description = item.querySelector('.news-excerpt')?.textContent.toLowerCase() || '';
+                const source = item.querySelector('.news-source')?.textContent.toLowerCase() || '';
+                const category = item.querySelector('.news-category')?.textContent.toLowerCase() || '';
+                
+                if (!searchTerm || 
+                    title.includes(searchTerm) || 
+                    description.includes(searchTerm) || 
+                    source.includes(searchTerm) || 
+                    category.includes(searchTerm)) {
+                    item.style.display = '';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            document.getElementById('newsCount').textContent = `Новостей: ${visibleCount}`;
+        }
+
+        // Настройка обработчиков событий
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchBtn = document.querySelector('.search-box button');
+            const searchInput = document.getElementById('searchInput');
+            
+            if (searchBtn) {
+                searchBtn.addEventListener('click', performSearch);
+            }
+            
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') performSearch();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
