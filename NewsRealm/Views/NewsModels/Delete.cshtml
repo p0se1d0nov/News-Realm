@@ -19,29 +19,83 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
+            @Html.DisplayNameFor(model => model.Id)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
+            @Html.DisplayFor(model => model.Id)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ShortDescription)
+                @Html.DisplayNameFor(model => model.Source)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ShortDescription)
+                @Html.DisplayFor(model => model.Source)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LinkToResource)
+                @Html.DisplayNameFor(model => model.Title)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LinkToResource)
+                @Html.DisplayFor(model => model.Title)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdateDate)
+                @Html.DisplayNameFor(model => model.Description)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdateDate)
+                @Html.DisplayFor(model => model.Description)
         </dd>
+        <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.MainText)
+        </dt>
+        <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.MainText)
+        </dd>
+        <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.ImageUrl)
+        </dt>
+        <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.ImageUrl)
+        </dd>
+        <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.Authors)
+        </dt>
+        <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.Authors)
+        </dd>
+        <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.Category)
+        </dt>
+        <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.Category)
+        </dd>
+        <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.DatePublish)
+        </dt>
+        <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.DatePublish)
+        </dd>
+        <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.TimePublish)
+        </dt>
+        <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.TimePublish)
+        </dd>
+        <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.Language)
+        </dt>
+        <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.Language)
+        </dd>
+        <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.Url)
+        </dt>
+        <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.Url)
+        </dd>
+        <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.CreatedAt)
+</dt>
+<dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.CreatedAt)
+</dd>
     </dl>
     
     <form asp-action="Delete">

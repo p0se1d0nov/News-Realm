@@ -19,16 +19,40 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Source)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ShortDescription)
+                @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LinkToResource)
+                    @Html.DisplayNameFor(model => model.MainText)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UpdateDate)
+                    @Html.DisplayNameFor(model => model.ImageUrl)
+            </th>
+            <th>
+                    @Html.DisplayNameFor(model => model.Authors)
+            </th>
+            <th>
+                    @Html.DisplayNameFor(model => model.Category)
+            </th>
+            <th>
+                    @Html.DisplayNameFor(model => model.DatePublish)
+            </th>
+            <th>
+                    @Html.DisplayNameFor(model => model.TimePublish)
+            </th>
+            <th>
+                    @Html.DisplayNameFor(model => model.Language)
+            </th>
+            <th>
+                    @Html.DisplayNameFor(model => model.Url)
             </th>
             <th></th>
         </tr>
@@ -37,17 +61,41 @@
 @foreach (var item in Model) {
         <tr>
             <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Source)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ShortDescription)
+                @Html.DisplayFor(modelItem => item.Description)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LinkToResource)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdateDate)
-            </td>
+                <td>
+                        @Html.DisplayFor(modelItem => item.MainText)
+                </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ImageUrl)
+                </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Authors)
+                </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Category)
+                </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DatePublish)
+                </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TimePublish)
+                </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Language)
+                </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Url)
+                </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
