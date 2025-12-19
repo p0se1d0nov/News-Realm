@@ -13,5 +13,7 @@ namespace NewsRealm.Models
         public string LinkToResource { get; set; }
 
         public DateTime UpdateDate { get; set; } = DateTime.UtcNow;
+
+
     }
 }
