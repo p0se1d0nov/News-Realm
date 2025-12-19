@@ -9,6 +9,8 @@ from itemadapter import ItemAdapter
 import psycopg2
 from psycopg2 import sql
 from datetime import datetime
+import os
+import sys
 
 
 class TheNewsPipeline:
@@ -32,13 +34,41 @@ class TheNewsPipeline:
         self.cur = None
 
     def open_spider(self, spider):
-        self.conn = psycopg2.connect(
-            host=self.pg_host,
-            port=self.pg_port,
-            user=self.pg_user,
-            password=self.pg_password,
-            dbname=self.pg_database
-        )
+        # Исправление проблемы с кодировкой на Windows
+        # Устанавливаем переменные окружения для правильной кодировки
+        if sys.platform == 'win32':
+            # Сохраняем текущие значения
+            old_pgpassword = os.environ.get('PGPASSWORD')
+            # Устанавливаем переменные окружения для psycopg2
+            os.environ['PGPASSWORD'] = str(self.pg_password)
+            os.environ['PGCLIENTENCODING'] = 'UTF8'
+        
+        try:
+            # Используем параметры подключения как обычные строки
+            self.conn = psycopg2.connect(
+                host=str(self.pg_host),
+                port=int(self.pg_port),
+                user=str(self.pg_user),
+                password=str(self.pg_password),
+                dbname=str(self.pg_database),
+                client_encoding='UTF8',
+                connect_timeout=10
+            )
+            # Устанавливаем кодировку соединения явно
+            self.conn.set_client_encoding('UTF8')
+        except UnicodeDecodeError as e:
+            # Если все еще ошибка кодировки, пробуем через DSN
+            spider.logger.warning(f"Ошибка кодировки при подключении, пробуем DSN: {e}")
+            dsn = f"host={self.pg_host} port={self.pg_port} dbname={self.pg_database} user={self.pg_user} password={self.pg_password}"
+            self.conn = psycopg2.connect(dsn)
+            self.conn.set_client_encoding('UTF8')
+        finally:
+            # Восстанавливаем переменные окружения
+            if sys.platform == 'win32':
+                if old_pgpassword is not None:
+                    os.environ['PGPASSWORD'] = old_pgpassword
+                elif 'PGPASSWORD' in os.environ:
+                    del os.environ['PGPASSWORD']
         self.cur = self.conn.cursor()
         # Создаём таблицу news если её нет с улучшенной схемой
         self.cur.execute("""
