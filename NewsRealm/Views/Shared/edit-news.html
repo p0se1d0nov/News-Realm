@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewsFlow | Редактировать новость</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Slab:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Дополнительные стили для страницы редактирования */
+        .search-section {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+        }
+        
+        .search-section h3 {
+            font-size: 1.4rem;
+            color: #1a237e;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 20px;
+            align-items: end;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Результаты поиска */
+        .search-results {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            border: 2px dashed #ddd;
+        }
+        
+        .search-results h4 {
+            font-size: 1.1rem;
+            color: #1a237e;
+            margin-bottom: 15px;
+        }
+        
+        .result-item {
+            margin-bottom: 20px;
+        }
+        
+        .found-news {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #4fc3f7;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .found-news-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .found-source {
+            background: #e8f4fc;
+            color: #1a237e;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .found-id {
+            background: #f0f0f0;
+            color: #555;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        
+        .found-news h4 {
+            font-size: 1.2rem;
+            color: #1a237e;
+            margin-bottom: 10px;
+        }
+        
+        .found-news p {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .found-news-footer {
+            display: flex;
+            justify-content: space-between;
+            color: #777;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+        
+        .found-authors {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        .btn-delete {
+            background: #ffebee;
+            color: #d32f2f;
+            border: 2px solid #ffcdd2;
+            padding: 14px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .btn-delete:hover {
+            background: #d32f2f;
+            color: white;
+            border-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-newspaper"></i>
+                    <div>
+                        <h1>NewsFlow</h1>
+                        <span class="tagline">Редактировать новость</span>
+                    </div>
+                </a>
+                
+                <div class="header-actions">
+                    <a href="index.html" class="btn-action">
+                        <i class="fas fa-arrow-left"></i> На главную
+                    </a>
+                    <a href="add-news.html" class="btn-action">
+                        <i class="fas fa-plus"></i> Добавить
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h2><i class="fas fa-edit"></i> Редактировать новость</h2>
+                <p class="page-subtitle">Введите ID новости для загрузки и редактирования</p>
+            </div>
+            
+            <!-- Шаг 1: Поиск новости по ID -->
+            <div class="search-section">
+                <h3><i class="fas fa-search"></i> Найти новость для редактирования</h3>
+                <div class="search-form">
+                    <div class="form-group">
+                        <label for="newsId">ID новости *</label>
+                        <input type="number" id="newsId" placeholder="Введите числовой ID новости" required>
+                        <div class="form-hint">ID можно получить из списка новостей на главной странице</div>
+                    </div>
+                    
+                    <button type="button" class="btn-submit" id="searchNewsBtn">
+                        <i class="fas fa-search"></i> Найти новость
+                    </button>
+                </div>
+                
+                <!-- Результаты поиска -->
+                <div class="search-results" id="searchResults" style="display: none;">
+                    <h4>Результаты поиска:</h4>
+                    <div class="result-item" id="resultItem">
+                        <!-- Здесь будет отображаться найденная новость -->
+                    </div>
+                    <button type="button" class="btn-action" id="editFoundNewsBtn" style="display: none;">
+                        <i class="fas fa-edit"></i> Редактировать эту новость
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Шаг 2: Форма редактирования (скрыта до поиска) -->
+            <div class="form-container" id="editFormContainer" style="display: none;">
+                <h3><i class="fas fa-edit"></i> Редактирование новости</h3>
+                <form id="editNewsForm">
+                    <!-- Source (Источник) -->
+                    <div class="form-group">
+                        <label for="editSource">Источник *</label>
+                        <input type="text" id="editSource" required>
+                    </div>
+                    
+                    <!-- Title (Заголовок) -->
+                    <div class="form-group">
+                        <label for="editTitle">Заголовок новости *</label>
+                        <input type="text" id="editTitle" required>
+                    </div>
+                    
+                    <!-- Description (Краткое описание) -->
+                    <div class="form-group">
+                        <label for="editDescription">Краткое описание *</label>
+                        <textarea id="editDescription" rows="3" required></textarea>
+                    </div>
+                    
+                    <!-- MainText (Основной текст) -->
+                    <div class="form-group">
+                        <label for="editMainText">Основной текст новости *</label>
+                        <textarea id="editMainText" rows="10" required></textarea>
+                    </div>
+                    
+                    <!-- ImageUrl (Ссылка на изображение) -->
+                    <div class="form-group">
+                        <label for="editImageUrl">Ссылка на изображение</label>
+                        <input type="url" id="editImageUrl">
+                    </div>
+                    
+                    <!-- Authors (Авторы) -->
+                    <div class="form-group">
+                        <label for="editAuthors">Авторы</label>
+                        <input type="text" id="editAuthors">
+                    </div>
+                    
+                    <!-- Category (Категория) -->
+                    <div class="form-group">
+                        <label for="editCategory">Категория</label>
+                        <select id="editCategory">
+                            <option value="">Выберите категорию</option>
+                            <option value="Политика">Политика</option>
+                            <option value="Экономика">Экономика</option>
+                            <option value="Технологии">Технологии</option>
+                            <option value="Спорт">Спорт</option>
+                            <option value="Наука">Наука</option>
+                            <option value="Культура">Культура</option>
+                            <option value="Здоровье">Здоровье</option>
+                            <option value="Общество">Общество</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Language (Язык) -->
+                    <div class="form-group">
+                        <label for="editLanguage">Язык *</label>
+                        <select id="editLanguage" required>
+                            <option value="">Выберите язык</option>
+                            <option value="Русский">Русский</option>
+                            <option value="English">English</option>
+                            <option value="Español">Español</option>
+                            <option value="Deutsch">Deutsch</option>
+                            <option value="Français">Français</option>
+                            <option value="中文">中文</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" id="cancelEditBtn">
+                            <i class="fas fa-times"></i> Отменить
+                        </button>
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-save"></i> Сохранить изменения
+                        </button>
+                        <button type="button" class="btn-delete" id="deleteNewsBtn">
+                            <i class="fas fa-trash"></i> Удалить новость
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2023 NewsFlow. Форма редактирования новости.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchNewsBtn = document.getElementById('searchNewsBtn');
+            const searchResults = document.getElementById('searchResults');
+            const resultItem = document.getElementById('resultItem');
+            const editFoundNewsBtn = document.getElementById('editFoundNewsBtn');
+            const editFormContainer = document.getElementById('editFormContainer');
+            const editNewsForm = document.getElementById('editNewsForm');
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
+            const deleteNewsBtn = document.getElementById('deleteNewsBtn');
+            
+            // Получаем ID из URL, если есть
+            const urlParams = new URLSearchParams(window.location.search);
+            const newsIdFromUrl = urlParams.get('id');
+            
+            if (newsIdFromUrl) {
+                // Автоматически загружаем новость, если ID указан в URL
+                document.getElementById('newsId').value = newsIdFromUrl;
+                searchNewsById(newsIdFromUrl);
+            }
+            
+            // Поиск новости по ID
+            searchNewsBtn.addEventListener('click', function() {
+                const newsId = document.getElementById('newsId').value.trim();
+                
+                if (!newsId) {
+                    showNotification('Пожалуйста, введите ID новости', 'error');
+                    return;
+                }
+                
+                const cleanId = newsId.replace(/\s/g, '');
+                
+                // Проверяем, что это число
+                if (!cleanId || isNaN(cleanId) || parseInt(cleanId) <= 0) {
+                    showNotification('Пожалуйста, введите корректный ID новости (положительное число)', 'error');
+                    return;
+                }
+                
+                searchNewsById(cleanId);
+            });
+            
+            // Функция поиска новости по ID
+            function searchNewsById(id) {
+                // Показываем индикатор загрузки
+                searchResults.style.display = 'block';
+                editFoundNewsBtn.style.display = 'none';
+                
+                resultItem.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Поиск новости с ID: ${id}</p>
+                    </div>
+                `;
+                
+                // Имитация задержки запроса
+                setTimeout(() => {
+                    const newsId = parseInt(id);
+                    const foundNews = demoNewsDatabase.find(news => news.id === newsId);
+                    
+                    if (foundNews) {
+                        displayFoundNews(foundNews);
+                        showNotification('Новость найдена!', 'success');
+                    } else {
+                        showNotFound(newsId);
+                        showNotification('Новость не найдена', 'error');
+                    }
+                }, 1000);
+            }
+            
+            // Отображение найденной новости
+            function displayFoundNews(news) {
+                searchResults.style.display = 'block';
+                editFoundNewsBtn.style.display = 'block';
+                
+                resultItem.innerHTML = `
+                    <div class="found-news">
+                        <div class="found-news-header">
+                            <span class="found-source">${news.source || 'Без источника'}</span>
+                            <span class="found-id">ID: ${news.id}</span>
+                        </div>
+                        <h4>${news.title || 'Без заголовка'}</h4>
+                        <p>${news.description ? news.description.substring(0, 200) + (news.description.length > 200 ? '...' : '') : 'Без описания'}</p>
+                        <div class="found-news-footer">
+                            <span>Категория: ${news.category || 'Не указана'}</span>
+                            <span>Автор: ${news.authors || 'Не указан'}</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Сохранение найденной новости для редактирования
+                editFoundNewsBtn.onclick = function() {
+                    loadNewsIntoForm(news);
+                };
+            }
+            
+            // Показать сообщение "не найдено"
+            function showNotFound(id) {
+                searchResults.style.display = 'block';
+                editFoundNewsBtn.style.display = 'none';
+                
+                resultItem.innerHTML = `
+                    <div class="not-found">
+                        <i class="fas fa-search"></i>
+                        <h4>Новость не найдена</h4>
+                        <p>Новость с ID ${id} не найдена в базе данных.</p>
+                        <p>Проверьте правильность введенного ID.</p>
+                    </div>
+                `;
+            }
+            
+            // Загрузка новости в форму редактирования
+            function loadNewsIntoForm(news) {
+                document.getElementById('editSource').value = news.source || '';
+                document.getElementById('editTitle').value = news.title || '';
+                document.getElementById('editDescription').value = news.description || '';
+                document.getElementById('editMainText').value = news.main_text || '';
+                document.getElementById('editImageUrl').value = news.image_url || '';
+                document.getElementById('editAuthors').value = news.authors || '';
+                document.getElementById('editCategory').value = news.category || '';
+                document.getElementById('editLanguage').value = news.language || 'Русский';
+                
+                // Показать форму редактирования
+                editFormContainer.style.display = 'block';
+                document.querySelector('.search-section').style.display = 'none';
+                
+                // Сохранить ID для отправки
+                editNewsForm.dataset.newsId = news.id;
+            }
+            
+            // Отмена редактирования
+            cancelEditBtn.addEventListener('click', function() {
+                editFormContainer.style.display = 'none';
+                document.querySelector('.search-section').style.display = 'block';
+                searchResults.style.display = 'none';
+                editNewsForm.reset();
+            });
+            
+            // Обработчик отправки формы редактирования
+            editNewsForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const newsId = this.dataset.newsId;
+                const formData = {
+                    source: document.getElementById('editSource').value.trim(),
+                    title: document.getElementById('editTitle').value.trim(),
+                    description: document.getElementById('editDescription').value.trim(),
+                    main_text: document.getElementById('editMainText').value.trim(),
+                    image_url: document.getElementById('editImageUrl').value.trim(),
+                    authors: document.getElementById('editAuthors').value.trim(),
+                    category: document.getElementById('editCategory').value,
+                    language: document.getElementById('editLanguage').value
+                };
+                
+                // Валидация
+                if (!formData.source || !formData.title || !formData.description || !formData.main_text) {
+                    showNotification('Пожалуйста, заполните обязательные поля', 'error');
+                    return;
+                }
+                
+                // Симуляция сохранения
+                showNotification('Изменения сохранены! Перенаправление на главную...', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            });
+            
+            // Удаление новости
+            deleteNewsBtn.addEventListener('click', function() {
+                const newsId = editNewsForm.dataset.newsId;
+                
+                if (!newsId) {
+                    showNotification('ID новости не найден', 'error');
+                    return;
+                }
+                
+                if (confirm(`Вы уверены, что хотите удалить новость с ID ${newsId}? Это действие нельзя отменить.`)) {
+                    // Симуляция удаления
+                    showNotification('Новость удалена! Перенаправление на главную...', 'info');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                }
+            });
+            
+            // Позволяем нажимать Enter в поле ID
+            document.getElementById('newsId').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    searchNewsBtn.click();
+                }
+            });
+            
+            // Функция показа уведомления
+            function showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                
+                const bgColor = type === 'success' ? '#4CAF50' : 
+                               type === 'error' ? '#f44336' : 
+                               '#2196F3';
+                
+                const icon = type === 'success' ? 'check-circle' : 
+                            type === 'error' ? 'exclamation-circle' : 
+                            'info-circle';
+                
+                notification.innerHTML = `
+                    <i class="fas fa-${icon}"></i>
+                    <span>${message}</span>
+                `;
+                
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    background: ${bgColor};
+                    color: white;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    min-width: 300px;
+                    z-index: 3000;
+                    animation: slideIn 0.3s ease;
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => notification.remove(), 300);
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
