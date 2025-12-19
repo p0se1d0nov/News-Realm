@@ -6,14 +6,28 @@ namespace NewsRealm.Models
     {
         public long Id { get; set; }
 
+        public string Source { get; set; }
+
         public string Title { get; set; }
 
-        public string ShortDescription { get; set; }
+        public string Description { get; set; }
 
-        public string LinkToResource { get; set; }
+        public string MainText { get; set; }
 
-        public DateTime UpdateDate { get; set; } = DateTime.UtcNow;
+        public string ImageUrl {  get; set; }
 
+        public string Authors {  get; set; }
 
+        public string Category { get; set; }
+
+        public string DatePublish { get; set; }
+
+        public string TimePublish { get; set; }
+
+        public string Language { get; set; }
+
+        public string Url { get; set; }
+
+        public string CreatedAt { get; set; }
     }
 }
